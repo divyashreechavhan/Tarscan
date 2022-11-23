@@ -1,0 +1,83 @@
+Mongodb B1-Article
+
+
+> use Article
+switched to db Article
+> db.createCollection('Article')
+{ "ok" : 1 }
+> db.Article.insertOne({"Title" : "C",
+... "Content" : "Procedural language",
+... "Author" : "Yashwant Kanetkar",
+... "Author_age" : 25,
+... "DOP" : ISODate("2016-05-13T00:00:00Z"),
+... "Category" : "IT",
+... "Comment" : [
+... {
+... "Name" : "Sandesh",
+... "Remarks" : "Very Good"
+... },
+... {
+... "Name" : "Ravi",
+... "Remarks" : "Nice"
+... }
+... ]
+... })
+
+> db.Article.find();
+
+> db.Article.find().pretty();
+
+ii. Display the first document found in db
+> db.Article.findOne();
+
+iii. Display first document belonging to a certain Author say “Sharma” found in db.
+> db.Article.findOne({Author:"Sharma"})
+Null
+> db.Article.findOne({"Title":"C++"})
+
+iv. Modify the comment made by certain person on a certain article.
+db.Article.update({"Title":"C++","Comment.Name":"Sandesh"},{$set:{"Comment.$.Remarks":"Good"}})
+
+v. Insert record with save method without objectID.
+db.Article.save({"_id":1,"Title":"DBMS","Content":"Database","Author":"Silberscahtz",
+... "Author_age":40,"DOP":ISODate("2002-06-07"),"Category":"Comp",
+... "Comment":[{"Name":"Shai","Remarks":"Great"},{"Name":"Dabang","Remarks":"okk"}]})
+
+> db.Article.find().pretty();
+
+v. Insert record with save method with objectID. > db.Article.save({"Title":"TOC","Content":"Computation","Author":"Kapil-Mishra", "Author_age":44,"DOP":ISODate("2005-06-07"),"Category":"ENTC", "Comment":[{"Name":"Hope","Remarks":"Best"},{"Name":"Shivani","Remarks":"Great"}]})
+> db.Article.find().pretty();
+
+
+> db.Article.save({"_id":1,"Title":"DBMS","Content":"Database","Author":"Silberscahtz", "Author_age":40,"DOP":ISODate("2002-06-07"),"Category":"Comp", "Comment":[{"Name":"Shai","Remarks":"Great Book"},{"Name":"Dabang","Remarks":"okk"}]})
+> db.Article.find().pretty()> db.Article.find().pretty()
+
+
+vi. Update collection with save method.
+
+> db.Article.save({_id:1,Title:"DBMS",Content:"Structured Database",Author:"Silber", Author_age:50,DOP:ISODate("2002-06-07"),
+... Category:"Comp",Comment:[{Name:"Shai",Remarks:"Great book"}, {Name:"Dabang",Remarks:"Okk"}]})
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : 1 })
+> db.ar.findOne({_id:1})
+
+VII. Add one more comment for particular title
+> db.Article.update({Title:"TOC"},{$push:{Comment:{Name:"Hope",Remarks:"Bad"}}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.Article.find().pretty();
+
+> db.Article.findOne({Title:"TOC"})
+
+viii. Delete the documents whose author age is less than 18. 
+> db.Article.remove( { Author_age: { $lt: 18 } } )
+WriteResult({ "nRemoved" : 0 })
+> db.Article.find().pretty();
+
+ix. Delete All Documents from a Collection 
+> db.Article.remove( { } )
+WriteResult({ "nRemoved" : 3 })
+> db.Article.find().pretty();
+
+x. Delete the Article collection
+> db.Article.drop()
+true
+

@@ -1,0 +1,133 @@
+Assignment-7
+create database assign_7;
+use assign_7;
+create table Library(B_id int ,Title varchar(20), Authors varchar(20), Edition int ,No_of_copies int);
+desc library;
+
+mysql> insert into library values(1,"TOC","Harshada",2,6);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(2,"DBMS","Harsh",1,4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(3,"SPOS","Amit",3,5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(4,"IEEE","Sumit",3,6);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(5,"CNS","Akash",2,7);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select*from library;
+
+1.Create a trigger to keep the track of records that are updated or deleted from the library table .The old values of updated or deleted record should be added in library audit table along with the date of modification ,type of modification and the user who performed the modification.
+
+mysql> create table library_audit(B_id int ,Title varchar(20), Authors varchar(20), Edition int ,No_of_copies int,date_of_mod date, type_of_operation varchar(20), username varchar(20));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc library_audit;
+
+mysql> create trigger t
+    -> after update on library
+    -> for each row
+    -> begin
+    ->  declare a varchar(10);
+    -> set a="updated";
+    -> insert into library_audit values(old.B_id,old.Title,old.Authors,old.Edition,old.no_of_copies,curdate(),a,current_user());
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql> create trigger t1
+    -> after delete on library
+    -> for each row
+    -> begin
+    -> declare b varchar(10);
+    -> set b="deleted";
+    -> insert into library_audit values(old.B_id,old.Title,old.Authors,old.Edition,old.no_of_copies,curdate(),b,current_user());
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>  delete from library where B_id=3;
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select *from library_audit;
+    -> //
+
+mysql> update library set Authors="Kapil-Mishra" where B_id=1;
+    -> //
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select *from library_audit;
+    -> //
+2.To create a trigger to check the number of copies available before issuing a book if number of copies issuing > the number of books available then issue the number of books which are available.
+
+mysql> create table transaction(Trans_id int, B_id int, I_R varchar(20), No_of_copies int);
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc transaction;
+    -> //
+
+mysql> create trigger t2
+    -> before insert on transaction
+    -> for each row
+    -> begin
+    -> declare no int;
+    -> if new.I_R="I" then select no_of_copies  into no from library where B_id=new.B_id;
+    -> if new.no_of_copies > no then set new.no_of_copies=no;
+    -> end if;
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into transaction values(10,1,"I",3);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> Select *from transaction;
+    -> //
+
+3.To update the number of copies available after the book is issued or returned. delete from transaction;
+mysql> delete from transaction;
+    -> //
+Query OK, 1 row affected (0.01 sec)
+mysql> create trigger t3
+    -> after insert on transaction
+    ->  for each row
+    -> begin
+    ->  if new.I_R="I" then
+    ->  update library set no_of_copies=no_of_copies-new.no_of_copies where B_id=new.B_id;
+    -> else update library set no_of_copies=no_of_copies +new.no_of_copies where B_id=new.B_id;
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into transaction values(10,2,"I",7);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from library;
+    -> //
+
+mysql> insert into transaction values(14,5,"I",3);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from library;
+    -> //
+
+
+mysql> select * from transaction;
+    -> //
+mysql> insert into transaction values(12,3,"I",5);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from library;
+    -> //
+mysql> select * from transaction;
+    -> //

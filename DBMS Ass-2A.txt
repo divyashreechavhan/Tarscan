@@ -1,0 +1,161 @@
+Assignment-2A
+
+mysql> create database university1;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use university1;
+Database changed
+
+mysql> create table Department (dept_no int, dept_name varchar(30), buliding_name varchar(30), UNIQUE (dept_name));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table Instructor (ins_id int, ins_name varchar(30) NOT NULL, dept_no int, salary int, mob_no int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table Course (course_id int, title varchar(30) , dept_no int, credits int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table Teaches (teacher_id int, course_id int, semester int, year int);
+Query OK, 0 rows affected (0.02 sec)
+
+1) Add the primary key in department table.
+mysql> alter table Department ADD primary key(dept_no);
+Query OK, 0 rows affected (0.07 sec)
+
+2) Add the foreign key in instructor table.
+mysql> alter table Instructor ADD foreign key(dept_no) REFERENCES Department(dept_no);
+Query OK, 0 rows affected (0.06 sec)
+
+3) Modify the table department by adding a column budget.
+mysql> alter table Department ADD budget int;
+Query OK, 0 rows affected (0.02 sec)
+
+4) Create unique index on mobile number of instructor table.
+mysql> create UNIQUE INDEX uniq_no ON instructor (mob_no);
+Query OK, 0 rows affected (0.02 sec)
+
+5) Create a view of instructor relation except the salary field.
+mysql> create view ins_view as select ins_id, ins_name, dept_no, mob_no
+from Instructor;
+Query OK, 0 rows affected (0.01 sec)
+
+6) Insert record into instructor table using newly created viewname.
+mysql> create table instructor (ins_id int, ins_name varchar(30) NOT NULL, dept_no int, salary int, mob_no int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into ins_view values(1,"nishant",1,99);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into ins_view values(2,"shivam",1,88);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> desc ins_view;
+
+mysql> select*from ins_view;
+
+7) Update the department number of particular instructor using update view.
+mysql> update ins_view set dept_no = 2 where ins_name ="nishant";
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select*from ins_view;
+
+
+mysql> desc ins_view;
+
+8) Delete record of particular instructor from instructor table using newly created viewname.
+mysql> delete from ins_view where ins_name = "shivam";
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select*from instructor;
+
+9) Delete the last view.
+
+mysql> drop view ins_view;
+Query OK, 0 rows affected (0.01 sec)
+
+10) Remove the Budget from department table
+mysql> alter table department drop column budget;
+Query OK, 0 rows affected (0.03 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+11) Increase the size of the title field of course relation.
+mysql> alter table course MODIFY title varchar(100);
+Query OK, 0 rows affected (0.03 sec)
+
+
+12) Delete the index from the instructor table.
+mysql> drop index uniq_no ON instructor;
+Query OK, 0 rows affected (0.04 sec)
+
+13) Rename the course table to another table name.
+mysql> alter table course RENAME storage;
+Query OK, 0 rows affected (0.02 sec)
+
+14) Create a view by showing a instructor name and title of course they teaches.
+mysql> create view ins_course as select ins_name , title from instructor , storage;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> select* from ins_course;
++----------+----------+
+| ins_name | title    |
++----------+----------+
+| nishant  | computer |
++----------+----------+
+1 row in set (0.01 sec)
+
+
+15) Delete the primary key from the department table.
+mysql> alter table department DROP primary key;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+
+16) create a sequence (or use the AUTO_INCREMENT attribute) on course_id starting with 51
+mysql> alter table storage auto_increment = 51;alter table storage auto_increment = 51;
+Query OK, 0 rows affected (0.01 sec)
+
+17) Create database and show all databases
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| akash              |
+| ass2               |
+| ass_5              |
+| ass_6              |
+| assign_7           |
+| assignment_5       |
+| assignment_6       |
+| db                 |
+| information_schema |
+| medical            |
+| medical1           |
+| mysql              |
+| performance_schema |
+| sys                |
+| university         |
+| university2        |
++--------------------+
+16 rows in set (0.00 sec)
+
+
+18)Create table and show all table
+mysql> show tables;
++-----------------------+
+| Tables_in_university2 |
++-----------------------+
+| course                |
+| department            |
+| instructor            |
+| teaches               |
++-----------------------+
+
+19) Delete all records with truncate command.
+mysql> truncate table department;
+Query OK, 0 rows affected (0.04 sec)
+
+
+20) Delete teaches table
+mysql> drop table teaches;
+Query OK, 0 rows affected (0.01 sec)

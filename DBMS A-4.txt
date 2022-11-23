@@ -1,0 +1,56 @@
+create table borrower(roll_no int,name varchar(20),dtofissue date,name_of_book varchar(20),status varchar(20));
+> table created
+
+create table fine(roll_no int,date1 date,amount int);
+
+> table created
+
+
+insert into borrower values(1,'harshu',to_date('01082022','dd/mm/yyyy'),'toc','i');
+insert into borrower values(2,'shiv',to_date('01112022','dd/mm/yyyy'),'dbms','r');
+insert into borrower values(3,'amit',to_date('12092022','dd/mm/yyyy'),'iot','i');
+insert into borrower values(4,'sejal',to_date('09112022','dd/mm/yyyy'),'cns','r');
+insert into borrower values(5,'neha',to_date('12052022','dd/mm/yyyy'),'spos','i');
+
+select * from borrower;
+
+declare 
+roll int:=1;
+b_name varchar(20):='toc';
+issue_date date;
+no_days int;
+no_of_days_to_be_fined int :=0;
+amount int:=0;
+invalid_roll_no exception;
+begin
+if roll<0 then raise invalid_roll_no;
+end if;
+select dtofissue into issue_date from borrower where roll_no=roll and name_of_book=b_name;
+no_days:=sysdate-issue_date;
+if(no_days>15 and no_days<30) then
+no_of_days_to_be_fined:=no_days-15;
+amount:=no_of_days_to_be_fined*5;
+elsif (no_days>30) then
+no_of_days_to_be_fined:=no_days-15;
+amount:=15*5+(no_of_days_to_be_fined-15)*50;
+else
+amount:=0;
+end if;
+insert into fine values(roll,sysdate,amount);
+update borrower set status='r'where  roll_no=roll and name_of_book=b_name;
+exception
+when invalid_roll_no then
+dbms_output.put_line('invalid roll no');
+when no_data_found then
+dbms_output.put_line('no data found');
+when others then
+dbms_output.put_line('exception occured');
+end;
+
+>>Statement processed.
+exception occured
+
+select * from fine;
+
+
+select * from borrower;

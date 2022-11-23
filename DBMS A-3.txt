@@ -1,0 +1,195 @@
+Assignment-3
+
+Problem Statement: Create the bank database with the foll table
+1) branch_master(branch_id,bname) branch_id is primary key
+
+=>  mysql> use bank;
+    Database changed
+    create table branch_master(branch_id int(30) primary key,branch_name varchar(30));
+    
+2) employee_master(emp_no,e_name,branch_id,salary ,dept,manager_id) empno 
+primary key ,branch id foreign key, manager_id foreign key on delete set null
+
+=> create table emp_master(emp_no int(20) primary key,emp_name varchar(20),branch_id int(20),salary int(20),dept varchar(20),manager_id int(20),foreign key(branch_id) references            branch_master(branch_id));
+
+
+3) contact details(empid,emailid,phnno)emp_id forieign key and apply on delete 
+set null constraint on emp_id
+
+=> create table contact_details(emp_id int(30),email_id varchar(30),phn_no int(30),foreign key (emp_id) references emp_master(emp_id) on delete set null);
+
+
+4) emp_address_details(emp_id,street ,city,state)apply a foreign on emp_id also 
+apply on delete cascade constraint
+
+=>  create table emp_address_details(emp_id int(20),street varchar(20),city varchar(20),state varchar(20),foreign key(emp_id) references contact_details(emp_id) on delete set null);
+
+5) branch_address(branch_id,city,state)branch_id is foreign key
+
+=>create table branch_add(branch_id int,city varchar(20),state varchar(20),foreign key(branch_id) references branch_master(branch_id));
+
+INSERT 4 RECORDS IN EACH TABLE:
+ 
+BRANCH_MASTER:
+mysql> insert into branch_master values(1,"pune");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_master values(2,"Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_master values(3,"pimpri");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into branch_master values(4,"vadgaon");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_master values(5,"ambegaon");
+Query OK, 1 row affected (0.01 sec)
+
+EMP_MASTER:
+
+mysql> insert into emp_master values(10,"prisha",2,40000,"HR",null);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_master values(11,"krishna",4,80000,"manager",10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_master values(12,"emma",4,80000,"admin",10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_master values(13,"rohan",1,60000,"senior",10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_master values(14,"harshu",5,90000,"assitant",10);
+Query OK, 1 row affected (0.01 sec)
+
+CONTACT_DETAILS:
+
+mysql> insert into contact_details values(11,"krisha@gmail.com",98765655);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into contact_details values(10,"prisha@gmail.com",99876775);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into contact_details values(14,"harsh@gmail.com",77576775);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into contact_details values(13,"rohan@gmail.com",65432775);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into contact_details values(12,"emma@gmail.com",76542775);
+Query OK, 1 row affected (0.01 sec)
+
+EMP_ADDRESS_DETAILS:
+
+mysql> insert into emp_address_details values(11,"pune","pune","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_address_details values(12,"vadgaon","pune","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_address_details values(13,"pimpri","pune","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_address_details values(14,"mumbai","mumbai","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_address_details values(10,"ambegaon","mumbai","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+BRANCH_ADDRESS:
+
+mysql> insert into branch_address values(1,"ambegaon","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_address values(2,"vadgaon","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_address values(3,"pimpri","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_address values(4,"mumbai","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_address values(5,"pune","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+1). list the employee details along with the branch name using inner join and 
+in order of employee no.
+
+=> select emp_id,emp_name,branch_name from emp_master e inner join branch_master b on     e.branch_id = b.branch_id order by emp_id;
+
+2). list the details of employees who belong to admin dept along the branch name 
+to which they belong.
+
+=> select emp_name,dept,branch_name from branch_master b,emp_master e where b.branch_id=e.branch_id and dept="admin";
+
+3). list the employee name along with the phn no and city(using inner join).
+
+=> select emp_name,phn_no,city from emp_master e inner join emp_address_details a on e.emp_id=a.emp_id inner join contact_details c on e.emp_id=c.emp_id;
+
+4. list the employee name with the contact details if have or not have any.
+//delete first 2 emp from emp_mas
+
+=> select emp_name,email_id,phn_no from contact_details c left join emp_master e on e.emp_id=c.emp_id;
+
+5). list the employee's contact details irrespective of whether they are working or 
+have left.
+
+=> select emp_name,email_id,phn_no from contact_details c right join emp_master e on e.emp_id=c.emp_id;
+
+6). retrive the employee name and their respective manager name.
+
+=> select e1.emp_name,e2.emp_name as manager from emp_master e1,emp_master e2 where e1.manager_id = e2.emp_id;
+
+7). list the employee details along with the branch name using natural join.
+
+=> select emp_name,dept,branch_name,salary from emp_master e natural join branch_master b;
+
+8). list the employee names who works at vadgaon branch along with the city of 
+that employee.
+
+=>select e.emp_id,emp_name,city from emp_master e,emp_address_details a,branch_master b where e.branch_id=b.branch_id and b.branch_name="vadgaon"and e.emp_id=a.emp_id;
+
+9). find the employee who works at vadgaon branch with salaries more than 10000 
+and list the employee names with the streets and city they live in.
+
+=> select emp_name,street,city,salary from emp_master e,emp_address_details a where e.emp_id=a.emp_id and e.emp_id in(select emp_id from branch_master b,emp_master c where branch_name="vadgaon" and salary>10000 and c.branch_id=b.branch_id);
+
+10. find the employees who live and work in same city.
+
+=> select emp_name from emp_master e,branch_address b,emp_address_details d where b.branch_id=e.branch_id and e.emp_id=d.emp_id and b.city=d.city;d
+
+11. find the employee whose salary are more than the salary of everybody who 
+works at branch vadgaon.
+
+=> select emp_name from emp_master where salary=(select max(salary) from emp_master e,branch_master b where branch_name="vadgaon" and b.branch_id=e.branch_id);
+
+12. create a total_employee view which will contain total employees
+
+=>  update emp_master set branch_id=1 where emp_id=10;
+
+     create view total_emp as select branch_name,count(emp_id) as TotalEmployee from emp_master e,branch_master b where e.branch_id=b.branch_id group by e.branch_id;
+
+   select * total_emp;
+
+13. Update total_employee view which will contain total employees at each 
+branch. 
+
+=>
+
+
+14). list the branch name where employee have a salary more than 100000.
+
+=>select branch_name from branch_master b,emp_master e where b.branch_id=e.branch_id and salary >10000;
+
+15). create a view which will show the avg salary and the total salary at each 
+branch.
+
+=>create view salary as select branch_name,avg(salary)as average,sum(salary) from emp_master e,branch_master b where b.branch_id=e.branch_id group by e.branch_id;
+
+select * from salary;
+
+15. find the employee who do not have a job at vadgaon branch.
+
+=> select emp_name from emp_master e,branch_master b where e.branch_id=b.branch_id and e.branch_id not in(select branch_id from branch_master where branch_name ="vadgaon");

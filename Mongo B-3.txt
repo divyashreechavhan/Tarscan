@@ -1,0 +1,30 @@
+use order
+db.createCollection("order")
+
+db.order.insertMany([ {_id:1,cust_id:"101",order_date:new Date("2020-03-01"),price:25, items:[{sku:"orange",qty:5,price:2.5},{sku:"apples",qty:5,price:2.5}], status:"P"}, 
+
+{_id:2,cust_id:"101",order_date:new Date("2020-03-08"),price:70, items:[{sku:"orange",qty:8,price:2.5},{sku:"chocolates",qty:5,price:10}], status:"D"}, ])
+
+
+1). Display total price per customer.
+=> var map=function(){emit(this.cust_id,this.price)};
+     var red=function(keys,values){return Array.sum(values)};
+     db.order.mapReduce(map,red,{'out':'neworders'})
+
+    db.neworders.find().pretty()
+
+
+2). Display total price per customer having status= D
+=> db.order.mapReduce(map,red,{'query':{status:'A'},'out':'new1'})
+      db.new1.find().pretty()
+
+
+3). Display total price for Status =P
+=> db.order.mapReduce(map,red,{'query':{status:'A'},'out':'new2'})
+     db.new2.find().pretty()
+
+
+4). Finding count of all keys in orders collection
+=> db.order.mapReduce(map,red,{'out':'new3'})
+      db.new3.find().pretty()
+
