@@ -119,7 +119,7 @@ in order of employee no.
 
 => select emp_id,emp_name,branch_name from emp_master e inner join branch_master b on     e.branch_id = b.branch_id order by emp_id;
 
-2). list the details of employees who belong to admin dept along the branch name 
+2). list the details of employees along  who belong to admin dept along the branch name 
 to which they belong.
 
 => select emp_name,dept,branch_name from branch_master b,emp_master e where b.branch_id=e.branch_id and dept="admin";

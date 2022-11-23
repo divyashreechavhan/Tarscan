@@ -1,0 +1,960 @@
+Assignment-2b
+
+mysql> create table patient(pat_id varchar(30),pat_name varchar(50),date_adm date,age int ,city varchar(50));
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> create table doctor(doc_id int,doc_name varchar(50),qual varchar(50), exp int, dept varchar(40), city varchar(30), salary int);
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> create table treats(doc_id int,pat_id varchar(50), disease varchar(50));
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> alter table doctor ADD primary key (doc_id);
+Query OK, 0 rows affected (0.11 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table treats ADD foreign key (doc_id) REFERENCES doctor(doc_id) ON DELETE CASCADE;
+Query OK, 0 rows affected (0.12 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> alter table treats ADD foreign key (pat_id) REFERENCES doctor(doc_id) ON DELETE SET NULL;
+Query OK, 0 rows affected (0.12 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> insert into doctor values (1,"sumit","MBBS",10,"cardiolody","pune",50000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into doctor values (2,"amit","MD",8,"dentist","pune",60000);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into doctor values (3,"anita","MBBS",7,"neurology","mumbai",30000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into doctor values (4,"suhas","MD",9,"cardiology","nashik",10000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into doctor values (5,"shubham","MBBS",12,"dentist","delhi",80000);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select* from doctor;
++--------+----------+------+------+------------+--------+--------+
+| doc_id | doc_name | qual | exp  | dept       | city   | salary |
++--------+----------+------+------+------------+--------+--------+
+|      1 | sumit    | MBBS |   25 | cardiolody | pune   |  50000 |
+|      2 | amit     | MD   |    8 | dentist    | pune   |  60000 |
+|      3 | anita    | MBBS |    7 | neurology  | mumbai |  30000 |
+|      4 | suhas    | MD   |   30 | cardiology | nashik |  10000 |
+|      5 | shubham  | MBBS |   21 | dentist    | delhi  |  80000 |
++--------+----------+------+------+------------+--------+--------+
+5 rows in set (0.00 sec)
+
+
+mysql> insert into patient values("p7", "ganesh","2022-10-25", 25 ,"pune");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into patient values("p8", "niraj","2022-11-02", 48 ,"nashik");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into patient values("p9", "yash","2022-11-12", 15 ,"pune");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into patient values("p10", "kartik","2022-11-14", 52 ,"mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into patient values("p11", "arina","2022-11-25", 30 ,"delhi");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select*from patient;
++--------+-----------+------------+------+--------+
+| pat_id | pat_name  | date_adm   | age  | city   |
++--------+-----------+------------+------+--------+
+| p7     | ganesh    | 2022-10-25 |   25 | pune   |
+| p8     | niraj     | 2022-11-02 |   48 | nashik |
+| p9     | yash      | 2022-11-12 |   15 | pune   |
+| p10    | kartik    | 2022-11-14 |   52 | mumbai |
+| p11    | arina     | 2022-11-25 |   30 | delhi  |
++--------+-----------+------------+------+--------+
+5 rows in set (0.00 sec)
+
+mysql> insert into treats values(1, "p11","tooth decay");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into treats values(2, "p10","cancer");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into treats values(3, "p9","coma");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into treats values(4, "p8","heart attack");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into treats values(5, "p7","tooth decay");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select* from treats;
++--------+--------+--------------+
+| doc_id | pat_id | disease      |
++--------+--------+--------------+
+|      1 | p11    | tooth decay  |
+|      2 | p10    | cancer       |
+|      3 | p9     | coma         |
+|      4 | p8     | heart attack |
+|      5 | p7     | tooth decay  |
++--------+--------+--------------+
+5 rows in set (0.00 sec)
+
+
+2. Display all the patient's name between the age group 18-50;
+ select pat_name from patient where age between 18 and 50;
++-----------+
+| pat_name  |
++-----------+
+| ganesh    |
+| niraj     |
+| yash      |
+| kartik    |
+| arina     |
++----------+
+5 rows in set (0.00 sec)
+
+
+3. Display the list of doctors who are MD;
+mysql> select doc_name from doctor where qual = "MD";
++----------+
+| doc_name |
++----------+
+| amit     |
+| suhas    |
++----------+
+2 rows in set (0.00 sec)
+
+
+4. Display the list of doctors whose exp is 20+ years;
+mysql> select doc_name from doctor where exp<20;
++----------+
+| doc_name |
++----------+
+| amit     |
+| anita    |
++----------+
+2 rows in set (0.00 sec)
+
+
+5. Display patients suffering from Cancer;
+mysql> select pat_name from patient,treats where treats.disease = "cancer" and treats.pat_id=patient.pat_id;
++----------+
+| pat_name |
++----------+
+| kartik   |
++----------+
+1 row in set (0.00 sec)
+
+
+6. Display the patient name and the doctor name who r in cancer;
+mysql> select pat_name , doc_name from patient, doctor, treats where treats.disease="cancer" and treats.doc_id=doctor.doc_id and treats.pat_id=patient.pat_id;
++----------+----------+
+| pat_name | doc_name |
++----------+----------+
+| kartik   | amit     |
++----------+----------+
+1 row in set (0.00 sec)
+
+
+7. Display the patient name, whose name starts with letter A, End with A, 
+having the exacts 5 letters;
+mysql> select pat_name from patient where pat_name like "a%" and pat_name like "%a" and length(pat_name)=5;
++----------+
+| pat_name |
++----------+
+| arina    |
++----------+
+1 row in set (0.00 sec)
+
+
+8. Remove all the records of patients with Pat_id =p10;
+mysql> delete from patient where pat_id ="p10";
+Query OK, 1 row affected (0.01 sec)
+
+
+9. Remove all the records of doctor Suhas;
+mysql> delete from doctor where doc_name ="suhas";
+Query OK, 1 row affected (0.01 sec)
+
+
+10. change the qualification of doctor shubham from mbbs to md;
+mysql> update doctor set qual ="MD" where doc_name ="shubham";
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+
+11. give five percent salary raise to the dentist 5% and 10% to cardiologists,
+in single query;
+mysql> update doctor set salary = case when dept = "dentist" then salary+salary*(0.05) when dept = "cardiology" then salary+salary*(0.1) end;
+Query OK, 4 rows affected (0.01 sec)
+Rows matched: 4  Changed: 4  Warnings: 0
+
+
+12. Display dept wise total salary of the doctors;
+mysql> select dept,sum(salary) from doctor group by dept;
+
+
+13. Find the dept , which has the highest avg salary;
+find the avg salary of docs in dentist dept;
+
+select dept_name,avg(salary) from doctor_table group by dept_name having avg(salary)>=all(select avg(salary) from doctor_table group by dept_name);
+mysql> select avg(salary) from doctor where dept="dentist";
++-------------+
+| avg(salary) |
++-------------+
+|  77175.0000 |
++-------------+
+1 row in set (0.01 sec)
+
+
+15. Find the dept where avg salary of the doctor is more than 50,000;
+mysql> select dept from doctor group by dept having avg(salary)>500000;
+
+
+16. find how many docs works in hospital;
+mysql> select count(*) from doctor;
++----------+
+| count(*) |
++----------+
+|        4 |
++----------+
+1 row in set (0.09 sec)
+
+
+17. Find out how many doctors actually treated a patient;
+mysql> select count(distinct doc_id) from treats;
++------------------------+
+| count(distinct doc_id) |
++------------------------+
+|                      4 |
++------------------------+
+1 row in set (0.01 sec)
+
+
+18)  list the cities in which either doctors or patient lives;
+mysql> select city from doctor union select city from patient;
++--------+
+| city   |
++--------+
+| pune   |
+| mumbai |
+| delhi  |
+| nashik |
++--------+
+4 rows in set (0.01 sec)
+
+
+
+19) list the cites where both lives; List dname pname and their cities name if 
+they live in same city
+mysql> select d.city from doctor as d,patient as p where d.city=p.city;
++-------+
+| city  |
++-------+
+| pune  |
+| pune  |
+| pune  |
+| pune  |
+| delhi |
++-------+
+5 rows in set (0.02 sec)
+
+
+20) Find the doctors who have not treated any patient;
+mysql> select doc_name,doc_id from doctor where doc_id not in(select distinct doc_id from treats);
+Empty set (0.01 sec)
+
+
+21. a) Display name of doctors and patients as a single column (union)
+ b) Let duplicate name appear many time (union all)
+mysql> select doc_name from doctor union select pat_name from patient;
+mysql> select doc_name from doctor union all select pat_name from patient;
++----------+
+| doc_name |
++----------+
+| sumit    |
+| amit     |
+| anita    |
+| shubham  |
+| ganesh   |
+| niraj    |
+| yash     |
+| arina    |
++----------+
+8 rows in set (0.00 sec)
+
+
+
+Assignment-3
+
+Problem Statement: Create the bank database with the foll table
+1) branch_master(branch_id,bname) branch_id is primary key
+
+=>  mysql> use bank;
+    Database changed
+    create table branch_master(branch_id int(30) primary key,branch_name varchar(30));
+    
+2) employee_master(emp_no,e_name,branch_id,salary ,dept,manager_id) empno 
+primary key ,branch id foreign key, manager_id foreign key on delete set null
+
+=> create table emp_master(emp_no int(20) primary key,emp_name varchar(20),branch_id int(20),salary int(20),dept varchar(20),manager_id int(20),foreign key(branch_id) references branch_master(branch_id));
+
+
+3) contact details(empid,emailid,phnno)emp_id forieign key and apply on delete 
+set null constraint on emp_id
+
+=> create table contact_details(emp_id int(30),email_id varchar(30),phn_no int(30),foreign key (emp_id) references emp_master(emp_id) on delete set null);
+
+
+4) emp_address_details(emp_id,street ,city,state)apply a foreign on emp_id also 
+apply on delete cascade constraint
+
+=>  create table emp_address_details(emp_id int(20),street varchar(20),city varchar(20),state varchar(20),foreign key(emp_id) references contact_details(emp_id) on delete set null);
+
+5) branch_address(branch_id,city,state)branch_id is foreign key
+
+=>create table branch_add(branch_id int,city varchar(20),state varchar(20),foreign key(branch_id) references branch_master(branch_id));
+
+INSERT 4 RECORDS IN EACH TABLE:
+ 
+BRANCH_MASTER:
+mysql> insert into branch_master values(1,"pune");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_master values(2,"Mumbai");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_master values(3,"pimpri");
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into branch_master values(4,"vadgaon");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_master values(5,"ambegaon");
+Query OK, 1 row affected (0.01 sec)
+
+EMP_MASTER:
+
+mysql> insert into emp_master values(10,"prisha",2,40000,"HR",null);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_master values(11,"krishna",4,80000,"manager",10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_master values(12,"emma",4,80000,"admin",10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_master values(13,"rohan",1,60000,"senior",10);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_master values(14,"harshu",5,90000,"assitant",10);
+Query OK, 1 row affected (0.01 sec)
+
+CONTACT_DETAILS:
+
+mysql> insert into contact_details values(11,"krisha@gmail.com",98765655);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into contact_details values(10,"prisha@gmail.com",99876775);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into contact_details values(14,"harsh@gmail.com",77576775);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into contact_details values(13,"rohan@gmail.com",65432775);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into contact_details values(12,"emma@gmail.com",76542775);
+Query OK, 1 row affected (0.01 sec)
+
+EMP_ADDRESS_DETAILS:
+
+mysql> insert into emp_address_details values(11,"pune","pune","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_address_details values(12,"vadgaon","pune","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_address_details values(13,"pimpri","pune","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_address_details values(14,"mumbai","mumbai","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into emp_address_details values(10,"ambegaon","mumbai","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+BRANCH_ADDRESS:
+
+mysql> insert into branch_address values(1,"ambegaon","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_address values(2,"vadgaon","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_address values(3,"pimpri","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_address values(4,"mumbai","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into branch_address values(5,"pune","maharashtra");
+Query OK, 1 row affected (0.01 sec)
+
+1). list the employee details along with the branch name using inner join and 
+in order of employee no.
+
+=> select emp_id,emp_name,branch_name from emp_master e inner join branch_master b on     e.branch_id = b.branch_id order by emp_id;
+
+2). list the details of employees who belong to admin dept along the branch name 
+to which they belong.
+
+=> select emp_name,dept,branch_name from branch_master b,emp_master e where b.branch_id=e.branch_id and dept="admin";
+
+3). list the employee name along with the phn no and city(using inner join).
+
+=> select emp_name,phn_no,city from emp_master e inner join emp_address_details a on e.emp_id=a.emp_id inner join contact_details c on e.emp_id=c.emp_id;
+
+4. list the employee name with the contact details if have or not have any.
+//delete first 2 emp from emp_mas
+
+=> select emp_name,email_id,phn_no from contact_details c left join emp_master e on e.emp_id=c.emp_id;
+
+5). list the employee's contact details irrespective of whether they are working or 
+have left.
+
+=> select emp_name,email_id,phn_no from contact_details c right join emp_master e on e.emp_id=c.emp_id;
+
+6). retrive the employee name and their respective manager name.
+
+=> select e1.emp_name,e2.emp_name as manager from emp_master e1,emp_master e2 where e1.manager_id = e2.emp_id;
+
+7). list the employee details along with the branch name using natural join.
+
+=> select emp_name,dept,branch_name,salary from emp_master e natural join branch_master b;
+
+8). list the employee names who works at vadgaon branch along with the city of 
+that employee.
+
+=>select e.emp_id,emp_name,city from emp_master e,emp_address_details a,branch_master b where e.branch_id=b.branch_id and b.branch_name="vadgaon"and e.emp_id=a.emp_id;
+
+9). find the employee who works at vadgaon branch with salaries more than 10000 
+and list the employee names with the streets and city they live in.
+
+=> select emp_name,street,city,salary from emp_master e,emp_address_details a where e.emp_id=a.emp_id and e.emp_id in(select emp_id from branch_master b,emp_master c where branch_name="vadgaon" and salary>10000 and c.branch_id=b.branch_id);
+
+10. find the employees who live and work in same city.
+
+=> select emp_name from emp_master e,branch_address b,emp_address_details d where b.branch_id=e.branch_id and e.emp_id=d.emp_id and b.city=d.city;d
+
+11. find the employee whose salary are more than the salary of everybody who 
+works at branch vadgaon.
+
+=> select emp_name from emp_master where salary=(select max(salary) from emp_master e,branch_master b where branch_name="vadgaon" and b.branch_id=e.branch_id);
+
+12. create a total_employee view which will contain total employees
+
+=>  update emp_master set branch_id=1 where emp_id=10;
+
+     create view total_emp as select branch_name,count(emp_id) as TotalEmployee from emp_master e,branch_master b where e.branch_id=b.branch_id group by e.branch_id;
+
+   select * total_emp;
+
+13. Update total_employee view which will contain total employees at each 
+branch. 
+
+=>
+
+
+14). list the branch name where employee have a salary more than 100000.
+
+=>select branch_name from branch_master b,emp_master e where b.branch_id=e.branch_id and salary >10000;
+
+15). create a view which will show the avg salary and the total salary at each 
+branch.
+
+=>create view salary as select branch_name,avg(salary)as average,sum(salary) from emp_master e,branch_master b where b.branch_id=e.branch_id group by e.branch_id;
+
+select * from salary;
+
+15. find the employee who do not have a job at vadgaon branch.
+
+=> select emp_name from emp_master e,branch_master b where e.branch_id=b.branch_id and e.branch_id not in(select branch_id from branch_master where branch_name ="vadgaon");
+
+
+
+
+Assignment -4 
+1) create database ass_5;
+ use ass_5;
+ create table Borrower(Rollin int, Name varchar(50), DateOfIssue date, NameOfBook varchar(50), Status varchar(50));
+ desc Borrower;
+ create table Fine(Rollno int, Date, Amt int);
+ desc Fine;
+ insert into Borrower values(1,"Rahul","2019-07-13","dbms","I");
+insert into Borrower values(2,"Rakesh","2019-07-28","sql","I");
+insert into Borrower values(33,"Aadil","2019-05-13","toc","I");
+insert into Borrower values(85,"Akbar","2019-06-20","java","I");
+select * from Borrower;
+select * from Fine;
+delimiter $
+create procedure calborrow(Rollno int,name varchar(50))
+->      begin
+    ->      declare 1date date;
+    ->      declare fine int(20);
+    ->      declare day int(20);
+    ->      select DateOfIssue into 1date from Borrower where Rollin=Rollno and NameOfBook=name;
+    ->      set day = datediff(curdate(),1date);
+    ->      IF(day>=15 and day<=30) then
+    ->      set fine=day*5;
+    ->      ELSEIF(day>30) then
+    ->      set fine=day*50;
+    ->      end IF;
+    ->      update Borrower  set Status='R' where Rollin=Rollno and NameOfBook=name;
+    ->      IF(fine is not null) then
+    ->     insert into Fine values(Rollno,curdate(),fine);
+    ->      end IF;
+    ->      end $
+
+call calborrow(33,'toc')$
+call calborrow(2,'sql')$
+call calborrow(1,'dbms')$
+
+select * from Borrower$
+
+select * from Fine$
+ 
+Assignment- 5
+
+create database Assignment_5;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use Assignment_5;
+Database changed
+mysql> create table result(roll int, name varchar(50), class varchar(50));
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> create table stud_marks(name varchar(50), marks int);
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> desc result;
+3 rows in set (0.00 sec)
+
+mysql> desc stud_marks;
+mysql> insert into stud_marks values("harshit",1400);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into stud_marks values("vivek",950);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into stud_marks values("borei",850);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from stud_marks;
+
+mysql> insert into result values(1,"harshit","");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into result values(2,"vivek","");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into result values(3,"borei","");
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from result;
+
+mysql> delimiter $
+mysql> create procedure proc_Grade(IN rno int, out grade varchar(25))
+    -> begin
+    ->  declare m int;
+    ->  select marks into m from stud_marks where name = (select name from result where roll=rno);
+    ->    if m>=990 and m<=1500 then
+    ->    select 'Distinction' into grade;
+    ->    update result set class='Distinction' where roll=rno;
+    ->    elseif m>=990 and m<=986 then
+    ->    select 'First Class' into grade;
+    ->    update result set class='First Class' where roll=rno;
+    ->    elseif m>=825 and m<=899 then
+    ->    select 'Higher Second Class' into grade;
+    ->      update  result set class='Higher Second Class' where roll=rno;
+    ->      else
+    ->      select '__' into grade;
+    ->      update  result set class='__' where roll=rno;
+    ->      end if;
+    ->      end;
+    ->      $
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter $
+mysql> create function func_grade(rno int)
+    -> returns varchar(25)
+    -> deterministic
+    -> begin
+    -> declare grade varchar(25);
+    -> call proc_Grade(rno,grade);
+    -> return grade;
+    -> end;
+    -> $
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> delimiter $
+mysql> delimiter ;
+mysql> select func_Grade(1);
++---------------+
+| func_Grade(1) |
++---------------+
+| Distinction   |
++---------------+
+1 row in set (0.01 sec)
+
+mysql> select func_Grade(2);
++---------------+
+| func_Grade(2) |
++---------------+
+| __            |
++---------------+
+1 row in set (0.01 sec)
+
+mysql> select func_Grade(3);
++---------------------+
+| func_Grade(3)       |
++---------------------+
+| Higher Second Class |
++---------------------+
+1 row in set (0.01 sec)
+
+mysql> select func_Grade(2);
++---------------+
+| func_Grade(2) |
++---------------+
+| __            |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> select * from result;
+
+mysql> update result set class = '' where roll>1;
+Query OK, 2 rows affected (0.01 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> update result set class = '' where roll>0;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 3  Changed: 1  Warnings: 0
+
+mysql> select * from result;
+
+mysql> select proc_Grade(1);
+ERROR 1305 (42000): FUNCTION assignment_5.proc_Grade does not exist
+mysql> select func_Grade(1);
++---------------+
+| func_Grade(1) |
++---------------+
+| Distinction   |
++---------------+
+1 row in set (0.01 sec)
+
+mysql> select * from result;
+
+mysql> select func_Grade(2);
++---------------+
+| func_Grade(2) |
++---------------+
+| __            |
++---------------+
+1 row in set (0.01 sec)
+
+mysql> select func_Grade(3);
++---------------------+
+| func_Grade(3)       |
++---------------------+
+| Higher Second Class |
++---------------------+
+1 row in set (0.01 sec)
+
+mysql> select * from result;
+
+
+
+
+
+Assignment-7
+create database assign_7;
+use assign_7;
+create table Library(B_id int ,Title varchar(20), Authors varchar(20), Edition int ,No_of_copies int);
+desc library;
+
+mysql> insert into library values(1,"TOC","Harshada",2,6);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(2,"DBMS","Harsh",1,4);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(3,"SPOS","Amit",3,5);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(4,"IEEE","Sumit",3,6);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into library values(5,"CNS","Akash",2,7);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select*from library;
+
+1.Create a trigger to keep the track of records that are updated or deleted from the library table .The old values of updated or deleted record should be added in library audit table along with the date of modification ,type of modification and the user who performed the modification.
+
+mysql> create table library_audit(B_id int ,Title varchar(20), Authors varchar(20), Edition int ,No_of_copies int,date_of_mod date, type_of_operation varchar(20), username varchar(20));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc library_audit;
+
+mysql> create trigger t
+    -> after update on library
+    -> for each row
+    -> begin
+    ->  declare a varchar(10);
+    -> set a="updated";
+    -> insert into library_audit values(old.B_id,old.Title,old.Authors,old.Edition,old.no_of_copies,curdate(),a,current_user());
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+
+mysql> create trigger t1
+    -> after delete on library
+    -> for each row
+    -> begin
+    -> declare b varchar(10);
+    -> set b="deleted";
+    -> insert into library_audit values(old.B_id,old.Title,old.Authors,old.Edition,old.no_of_copies,curdate(),b,current_user());
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql>  delete from library where B_id=3;
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select *from library_audit;
+    -> //
+
+mysql> update library set Authors="Kapil-Mishra" where B_id=1;
+    -> //
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> select *from library_audit;
+    -> //
+2.To create a trigger to check the number of copies available before issuing a book if number of copies issuing > the number of books available then issue the number of books which are available.
+
+mysql> create table transaction(Trans_id int, B_id int, I_R varchar(20), No_of_copies int);
+    -> //
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> desc transaction;
+    -> //
+
+mysql> create trigger t2
+    -> before insert on transaction
+    -> for each row
+    -> begin
+    -> declare no int;
+    -> if new.I_R="I" then select no_of_copies  into no from library where B_id=new.B_id;
+    -> if new.no_of_copies > no then set new.no_of_copies=no;
+    -> end if;
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into transaction values(10,1,"I",3);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> Select *from transaction;
+    -> //
+
+3.To update the number of copies available after the book is issued or returned. delete from transaction;
+mysql> delete from transaction;
+    -> //
+Query OK, 1 row affected (0.01 sec)
+mysql> create trigger t3
+    -> after insert on transaction
+    ->  for each row
+    -> begin
+    ->  if new.I_R="I" then
+    ->  update library set no_of_copies=no_of_copies-new.no_of_copies where B_id=new.B_id;
+    -> else update library set no_of_copies=no_of_copies +new.no_of_copies where B_id=new.B_id;
+    -> end if;
+    -> end //
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into transaction values(10,2,"I",7);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from library;
+    -> //
+
+mysql> insert into transaction values(14,5,"I",3);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from library;
+    -> //
+
+
+mysql> select * from transaction;
+    -> //
+mysql> insert into transaction values(12,3,"I",5);
+    -> //
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from library;
+    -> //
+mysql> select * from transaction;
+    -> //
+
+Assignment-8
+import mysql.connector
+con = mysql.connector.connect(
+         user='root',
+         password='Shiv@2001',
+         host='localhost',
+         database='poonam_db')
+#con = mysql.connector.connect(host="localhost", user="root", password="Shiv@2001", database="Shivani_db")
+#print(con)
+
+def insert(id,name, age, city):
+    res = con.cursor()
+    sql = "insert into users (id,name,age,city) values (%s,%s,%s,%s)"
+    user = (id,name, age, city)
+    res.execute(sql, user)
+    con.commit()
+    print("Data Insert Success")
+
+
+def update(name, age, city,id):
+    res = con.cursor()
+    sql = "update users set name=%s,age=%s,city=%s where id=%s"
+    user = (name, age, city,id)
+    res.execute(sql, user)
+    con.commit()
+    print("Data Update Success")
+
+
+
+def select():
+    res = con.cursor()
+    sql = "SELECT ID,NAME,AGE,CITY from users"
+    res.execute(sql)
+    # result=res.fetchone()
+    # result=res.fetchmany(2)
+    #result = res.fetchall()
+    #print(tabulate(result, headers=["ID", "NAME", "AGE", "CITY"]))
+    print(res.fetchall())
+
+
+
+def delete(id):
+    res = con.cursor()
+    sql = "delete from users where id=%s"
+    user = (id,)
+    res.execute(sql, user)
+    con.commit()
+    print("Data Delete Success")
+
+
+
+while True:
+    print("1.Insert Data")
+    print("2.Update Data")
+    print("3.Select Data")
+    print("4.Delete Data")
+    print("5.Exit")
+    choice = int(input("Enter Your Choice : "))
+    if choice == 1:
+        id = input("Enter The Id : ")
+        name = input("Enter Name : ")
+        age = input("Enter Age : ")
+        city = input("Enter City : ")
+        insert(id,name, age, city)
+    elif choice == 2:
+        id = input("Enter The Id : ")
+        name = input("Enter Name : ")
+        age = input("Enter Age : ")
+        city = input("Enter City : ")
+        update(name, age, city,id)
+    elif choice == 3:
+        select()
+    elif choice == 4:
+        id = input("Enter The Id to Delete : ")
+        delete(id)
+    elif choice == 5:
+        quit()
+    else:
+        print("Invalid Selection . Please Try Again !")
+
+
+
+Mongodb B1-Article
+> use Article
+switched to db Article
+> db.createCollection('Article')
+{ "ok" : 1 }
+> db.Article.insertOne({"Title" : "C",
+... "Content" : "Procedural language",
+... "Author" : "Yashwant Kanetkar",
+... "Author_age" : 25,
+... "DOP" : ISODate("2016-05-13T00:00:00Z"),
+... "Category" : "IT",
+... "Comment" : [
+... {
+... "Name" : "Sandesh",
+... "Remarks" : "Very Good"
+... },
+... {
+... "Name" : "Ravi",
+... "Remarks" : "Nice"
+... }
+... ]
+... })
+
+> db.Article.find();
+
+> db.Article.find().pretty();
+
+ii. Display the first document found in db
+> db.Article.findOne();
+
+iii. Display first document belonging to a certain Author say “Sharma” found in db.
+> db.Article.findOne({Author:"Sharma"})
+Null
+> db.Article.findOne({"Title":"C++"})
+
+iv. Modify the comment made by certain person on a certain article.
+db.Article.update({"Title":"C++","Comment.Name":"Sandesh"},{$set:{"Comment.$.Remarks":"Good"}})
+
+v. Insert record with save method without objectID.
+db.Article.save({"_id":1,"Title":"DBMS","Content":"Database","Author":"Silberscahtz",
+... "Author_age":40,"DOP":ISODate("2002-06-07"),"Category":"Comp",
+... "Comment":[{"Name":"Shai","Remarks":"Great"},{"Name":"Dabang","Remarks":"okk"}]})
+
+> db.Article.find().pretty();
+
+v. Insert record with save method with objectID. > db.Article.save({"Title":"TOC","Content":"Computation","Author":"Kapil-Mishra", "Author_age":44,"DOP":ISODate("2005-06-07"),"Category":"ENTC", "Comment":[{"Name":"Hope","Remarks":"Best"},{"Name":"Shivani","Remarks":"Great"}]})
+> db.Article.find().pretty();
+vi. Update collection with save method.
+> db.Article.save({"_id":1,"Title":"DBMS","Content":"Database","Author":"Silberscahtz", "Author_age":40,"DOP":ISODate("2002-06-07"),"Category":"Comp", "Comment":[{"Name":"Shai","Remarks":"Great Book"},{"Name":"Dabang","Remarks":"okk"}]})
+> db.Article.find().pretty()> db.Article.find().pretty()
+
+
+create trigger t3 
+after insert on transaction
+ for each row 
+begin
+ if new.I_R="I" then
+ update library set no_of_copies=no_of_copies-new.no_of_copies where B_id=new.B_id;
+else update library set no_of_copies=no_of_copies +new.no_of_copies where B_id=new.B_id;
+end if;
+end //
